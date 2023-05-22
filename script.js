@@ -49,12 +49,15 @@ class Particle {
       }
     } else if (this.history.length > 1) {
       this.history.shift();
+    } else {
+      this.reset();
     }
   }
   reset() {
     this.x = Math.floor(Math.random() * this.effect.width);
     this.y = Math.floor(Math.random() * this.effect.height);
     this.history = [{ x: this.x, y: this.y }];
+    this.timer = this.maxLength * 2;
   }
 }
 
@@ -63,13 +66,13 @@ class Effect {
     this.width = width;
     this.height = height;
     this.particles = [];
-    this.numberOfParticles = 300;
-    this.cellSize = 20;
+    this.numberOfParticles = 800;
+    this.cellSize = 10;
     this.rows;
     this.cols;
     this.flowField = [];
-    this.curve = 0.5;
-    this.zoom = 0.4;
+    this.curve = 1;
+    this.zoom = 0.11;
     this.init();
   }
   init() {
