@@ -39,7 +39,7 @@ class Particle {
       let x = Math.floor(this.x / this.effect.cellSize);
       let y = Math.floor(this.y / this.effect.cellSize);
       let index = y * this.effect.cols + x;
-      this.angle = this.effect.flowField[index];
+      this.angle = this.effect.flowField[index].colorAngle;
 
       this.speedX = Math.cos(this.angle);
       this.speedY = Math.sin(this.angle);
@@ -93,6 +93,7 @@ class Effect {
     this.context.font = "80px Impact";
     this.context.textAlign = "center";
     this.context.textBaseline = "middle";
+    this.context.fillStyle = "red";
     this.context.fillText("CIRCULATION", this.width * 0.5, this.height * 0.5);
   }
   init() {
@@ -105,17 +106,38 @@ class Effect {
     this.drawText();
 
     // scan pixel data
-    const pixels = this.context.getImageData(0, 0, this.width, this.height);
+    const pixels = this.context.getImageData(
+      0,
+      0,
+      this.width,
+      this.height
+    ).data;
     console.log(pixels);
-
-    for (let y = 0; y < this.rows; y++) {
-      for (let x = 0; x < this.cols; x++) {
-        let angle =
-          (Math.cos(x * this.zoom) + Math.sin(y * this.zoom)) * this.curve;
-        this.flowField.push(angle);
-        console.log(this.flowField);
+    for (let y = 0; y < this.height; y += this.cellSize) {
+      for (let x = 0; x < this.width; x += this.cellSize) {
+        const index = (y * this.width + x) * 4;
+        const red = pixels[index];
+        const green = pixels[index + 1];
+        const blue = pixels[index + 2];
+        const alpha = pixels[index + 3];
+        const grayscale = (red + green + blue) / 3;
+        const colorAngle = ((grayscale / 255) * 6.28).toFixed(2);
+        this.flowField.push({
+          x: x,
+          y: y,
+          colorAngle: colorAngle,
+        });
       }
     }
+
+    // for (let y = 0; y < this.rows; y++) {
+    //   for (let x = 0; x < this.cols; x++) {
+    //     let angle =
+    //       (Math.cos(x * this.zoom) + Math.sin(y * this.zoom)) * this.curve;
+    //     this.flowField.push(angle);
+    //     console.log(this.flowField);
+    //   }
+    // }
 
     // create particles
     this.particles = [];
