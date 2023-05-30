@@ -1,12 +1,12 @@
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = 500;
+canvas.height = 500;
 
 // canvas settings
 ctx.fillStyle = "white";
 ctx.strokeStyle = "white";
-ctx.lineWidth = 2;
+ctx.lineWidth = 0.25;
 ctx.lineCap = "round";
 
 class Particle {
@@ -39,7 +39,10 @@ class Particle {
       let x = Math.floor(this.x / this.effect.cellSize);
       let y = Math.floor(this.y / this.effect.cellSize);
       let index = y * this.effect.cols + x;
-      this.angle = this.effect.flowField[index].colorAngle;
+
+      if (this.effect.flowField[index]) {
+        this.angle = this.effect.flowField[index].colorAngle;
+      }
 
       this.speedX = Math.cos(this.angle);
       this.speedY = Math.sin(this.angle);
@@ -71,8 +74,8 @@ class Effect {
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this.particles = [];
-    this.numberOfParticles = 500;
-    this.cellSize = 10;
+    this.numberOfParticles = 3000;
+    this.cellSize = 5;
     this.rows;
     this.cols;
     this.flowField = [];
@@ -90,11 +93,41 @@ class Effect {
     // });
   }
   drawText() {
-    this.context.font = "80px Impact";
+    this.context.font = "90px Impact";
     this.context.textAlign = "center";
     this.context.textBaseline = "middle";
-    this.context.fillStyle = "red";
-    this.context.fillText("CIRCULATION", this.width * 0.5, this.height * 0.5);
+
+    const gradient1 = this.context.createLinearGradient(
+      0,
+      0,
+      this.width,
+      this.height
+    );
+    gradient1.addColorStop(0.2, "rgb(255,0,0)");
+    gradient1.addColorStop(0.4, "rgb(0,255,0)");
+    gradient1.addColorStop(0.6, "rgb(150,100,100)");
+    gradient1.addColorStop(0.8, "rgb(0,255,255)");
+
+    const gradient2 = this.context.createRadialGradient(
+      this.width * 0.5,
+      this.height * 0.5,
+      10,
+      this.width * 0.5,
+      this.height * 0.5,
+      this.width
+    );
+    gradient2.addColorStop(0.2, "rgb(0,0,255)");
+    gradient2.addColorStop(0.4, "rgb(200,255,0)");
+    gradient2.addColorStop(0.6, "rgb(0,0,255)");
+    gradient2.addColorStop(0.8, "rgb(0,0,0)");
+
+    this.context.fillStyle = gradient2;
+    this.context.fillText(
+      "CIRCULATION",
+      this.width * 0.5,
+      this.height * 0.5,
+      this.width * 0.9
+    );
   }
   init() {
     //create flow field
