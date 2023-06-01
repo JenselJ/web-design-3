@@ -1,12 +1,12 @@
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d");
-canvas.width = 500;
+canvas.width = 800;
 canvas.height = 500;
 
 // canvas settings
 ctx.fillStyle = "white";
 ctx.strokeStyle = "white";
-ctx.lineWidth = 0.25;
+ctx.lineWidth = 0.5;
 ctx.lineCap = "round";
 
 class Particle {
@@ -16,12 +16,12 @@ class Particle {
     this.y = Math.floor(Math.random() * this.effect.height);
     this.speedX;
     this.speedY;
-    this.speedModifier = Math.floor(Math.random() * 5 + 1);
+    this.speedModifier = Math.floor(Math.random() * 2 + 1);
     this.history = [{ x: this.x, y: this.y }];
-    this.maxLength = Math.floor(Math.random() * 200 + 10);
+    this.maxLength = Math.floor(Math.random() * 60 + 10);
     this.angle = 0;
     this.newAngle = 0;
-    this.angleCorrecter = Math.random() * 0.5 + 0.01;
+    this.angleCorrecter = Math.random() * 0.2 + 0.01;
     this.timer = this.maxLength * 2;
     this.colors = ["#4c026b", "#730d9e", "#9622c7", "#b44ae0", "#cd72f2"];
     this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
@@ -72,9 +72,9 @@ class Particle {
     let attempts = 0;
     let resetSuccess = false;
 
-    while (attempts < 1 && !resetSuccess) {
+    while (attempts < 100 && !resetSuccess) {
       attempts++;
-      let testIndex = Math.floor(Math.random(this.effect.flowField.length));
+      let testIndex = Math.floor(Math.random() * this.effect.flowField.length);
       if (this.effect.flowField[testIndex].alpha > 0) {
         this.x = this.effect.flowField[testIndex].x;
         this.y = this.effect.flowField[testIndex].y;
@@ -99,7 +99,7 @@ class Effect {
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this.particles = [];
-    this.numberOfParticles = 3000;
+    this.numberOfParticles = 6000;
     this.cellSize = 5;
     this.rows;
     this.cols;
@@ -118,7 +118,7 @@ class Effect {
     // });
   }
   drawText() {
-    this.context.font = "90px Impact";
+    this.context.font = "250px Impact";
     this.context.textAlign = "center";
     this.context.textBaseline = "middle";
 
@@ -148,7 +148,7 @@ class Effect {
 
     this.context.fillStyle = gradient2;
     this.context.fillText(
-      "CIRCULATION",
+      "CIRCULATE",
       this.width * 0.5,
       this.height * 0.5,
       this.width * 0.9
@@ -203,6 +203,7 @@ class Effect {
     for (let i = 0; i < this.numberOfParticles; i++) {
       this.particles.push(new Particle(this));
     }
+    this.particles.forEach((particle) => particle.reset());
   }
   drawGrid() {
     this.context.save();
